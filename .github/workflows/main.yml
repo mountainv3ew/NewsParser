@@ -1,0 +1,38 @@
+name: MAIN
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  Deploy:
+    name: Deploy the project to the server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restart
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: |
+            cd NewsParser
+
+            git pull
+
+            docker build \
+              --build-arg BUILDKIT_INLINE_CACHE=1 \
+              --cache-from parser \
+              -t parser .
+            
+            docker stop parser || true
+            docker rm parser || true
+
+            docker run -d \
+              --restart always \
+              --network parser-network \
+              --env-file env/.env \
+              --name parser \
+              parser
+        
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: root
+          password: ${{ secrets.SSH_PASSWORD }}
