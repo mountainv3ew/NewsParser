@@ -6,5 +6,3 @@ __pycache__/
 .env.example
 .gitignore
 .git/
-.session
-.session-journal
