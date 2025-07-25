@@ -35,5 +35,5 @@ class Client:
         await self.client(JoinChannelRequest(channel))
     
     async def start_client(self):
-        await self.client.start(bot_token=config.BOT_TOKEN)
+        await self.client.start()
         await self.client.run_until_disconnected()
